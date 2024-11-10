@@ -1,3 +1,6 @@
+Name: Olivier Guindon
+Student Number: 300236168
+
 # EmployeeApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.1.3.
