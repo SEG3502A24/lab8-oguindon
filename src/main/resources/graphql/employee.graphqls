@@ -1,11 +1,12 @@
 type Query {
     employees: [Employee]
-    employeeById(id: ID!): Employee
-    employeeByNumber(name: String!): Employee
+    employeeById(employeeId: ID!): Employee
+    employeeByNumber(employeeNumber: Int!): Employee
 }
 
 type Employee {
-    id: ID!
+    employeeId: ID!
+    employeeNumber: Int!
     name: String!
     dateOfBirth: String!
     city: String!
@@ -15,6 +16,7 @@ type Employee {
 }
 
 input CreateEmployeeInput {
+    employeeNumber: Int,
     name: String,
     dateOfBirth: String,
     city: String,
@@ -26,5 +28,5 @@ input CreateEmployeeInput {
 type Mutation {
     newEmployee(createEmployeeInput: CreateEmployeeInput!) : Employee!
     deleteEmployee(id: ID!) : Boolean
-    updateEmployee(id: ID!, createEmployeeInput: CreateEmployeeInput!) : Employee!
+    updateEmployee(employeeId: ID!, createEmployeeInput: CreateEmployeeInput!) : Employee!
 }

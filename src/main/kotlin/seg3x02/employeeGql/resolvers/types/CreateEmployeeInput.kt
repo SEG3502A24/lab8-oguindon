@@ -1,6 +1,7 @@
 package seg3x02.employeeGql.resolvers.types
 
 class CreateEmployeeInput (
+    val employeeNumber: Int? = null,
     val name: String? = null,
     val dateOfBirth: String?  = null,
     val city: String? = null,

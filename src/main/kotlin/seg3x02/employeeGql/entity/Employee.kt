@@ -5,13 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "employee")
 data class Employee(
-        val name: String,
-        val dateOfBirth: String,
-        val city: String,
-        val salary: Float,
-        val gender: String?,
-        val email: String?
+        var employeeNumber: Int,
+        var name: String,
+        var dateOfBirth: String,
+        var city: String,
+        var salary: Float,
+        var gender: String?,
+        var email: String?
 ) {
     @Id
-    var id: String = ""
+    var employeeId: String = ""
 }

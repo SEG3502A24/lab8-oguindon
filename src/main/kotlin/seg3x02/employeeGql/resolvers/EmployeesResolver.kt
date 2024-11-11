@@ -23,26 +23,27 @@ class EmployeesResolver(private val employeeRepository: EmployeeRepository,
     }
 
     @QueryMapping
-    fun employeeById(@Argument id: String): Book? {
-        val employee = employeeRepository.findById(id)
+    fun employeeById(@Argument employeeId: String): Employee? {
+        val employee = employeeRepository.findById(employeeId)
         return employee.orElse(null)
     }
 
     @QueryMapping
-    fun employeeByName(@Argument name: String): Employee? {
+    fun employeeByNumber(@Argument employeeNumber: Int): Employee? {
         val query = Query()
-        query.addCriteria(Criteria.where("name").`is`(name))
+        query.addCriteria(Criteria.where("employeeNumber").`is`(employeeNumber))
         val result = mongoOperations.find(query, Employee::class.java)
         return result.firstOrNull()
     }
 
     @MutationMapping
     fun newEmployee(@Argument("createEmployeeInput") input: CreateEmployeeInput) : Employee {
-        if (input.name != null &&
+        if (input.employeeNumber != null &&
+                input.name != null &&
                 input.dateOfBirth != null &&
                 input.city != null && input.salary != null) {
-            val employee = Employee(input.name, input.dateOfBirth, input.city, input.salary, input.gender, input.email)
-            employee.id = UUID.randomUUID().toString()
+            val employee = Employee(input.employeeNumber, input.name, input.dateOfBirth, input.city, input.salary, input.gender, input.email)
+            employee.employeeId = UUID.randomUUID().toString()
             employeeRepository.save(employee)
             return employee
         } else {
@@ -57,9 +58,12 @@ class EmployeesResolver(private val employeeRepository: EmployeeRepository,
     }
 
     @MutationMapping
-    fun updateEmployee(@Argument id: String, @Argument("createEmployeeInput") input: CreateEmployeeInput) : Employee {
-        val employee = employeeRepository.findById(id)
+    fun updateEmployee(@Argument employeeId: String, @Argument("createEmployeeInput") input: CreateEmployeeInput) : Employee {
+        val employee = employeeRepository.findById(employeeId)
         employee.ifPresent {
+            if (input.employeeNumber != null) {
+                it.employeeNumber = input.employeeNumber
+            }
             if (input.name != null) {
                 it.name = input.name
             }
