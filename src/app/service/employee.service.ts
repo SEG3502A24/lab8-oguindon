@@ -1,40 +1,36 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {BehaviorSubject, map, Observable} from "rxjs";
 import {Employee} from "../model/employee";
 import {Apollo} from "apollo-angular";
-import {gql} from "@apollo/client/core";
+import {ApolloQueryResult, FetchResult, gql} from "@apollo/client/core";
 
 const GET_EMPLOYEES = gql`
-query {
-  employees {
-    id
-    name
-    dateOfBirth
-    city
-    salary
-    gender
-    email
+  query($employeeNumber: Int!) {
+    employeeByNumber(employeeNumber: $employeeNumber) {
+      employeeId
+      employeeNumber
+      name
+      dateOfBirth
+      city
+      salary
+      gender
+      email
+    }
   }
-}
 `;
 
 const ADD_EMPLOYEE = gql`
-mutation addEmployee($name: String!,
-  $dateOfBirth: String!,
-  $city: String!,
-  $salary: Float!,
-  $gender: String!,
-  $email: String!) {
-  newEmployee(createEmployeeInput: {name: $name, dateOfBirth: $dateOfBirth, city: $city, salary: $salary, gender: $gender, email: $email}) {
-    id
-    name
-    dateOfBirth
-    city
-    salary
-    gender
-    email
+  mutation newEmployee($employeeNumber: Int!,
+    $name: String!,
+    $dateOfBirth: String!,
+    $city: String!,
+    $salary: Float!,
+    $gender: String,
+    $email: String) {
+    newEmployee(createEmployeeInput: {employeeNumber: $employeeNumber, name: $name, dateOfBirth: $dateOfBirth, city: $city, salary: $salary, gender: $gender, email: $email}) {
+      employeeId
+    }
   }
-}
 `;
 
 @Injectable({
@@ -42,31 +38,31 @@ mutation addEmployee($name: String!,
 })
 export class EmployeeService {
   employees$: BehaviorSubject<readonly Employee[]> = new BehaviorSubject<readonly Employee[]>([]);
+  
+  private apollo: Apollo = inject(Apollo);
 
-  constructor(private apollo: Apollo) {
-    this.apollo.watchQuery<any>({query: GET_EMPLOYEES}).valueChanges.pipe(
-      map(({data, loading}) => {
-        this.employees$.next(data.employees);
-      })
-    ).subscribe();
+  public getEmployee(employeeNumber: number): Observable<ApolloQueryResult<any>> {
+    return this.apollo
+      .query<any>({
+      query: GET_EMPLOYEES,
+      variables: {
+        employeeNumber
+      }
+    });
   }
 
-  get $(): Observable<readonly Employee[]> {
-    return this.employees$.asObservable();
-  }
-
-  addEmployee(employee: Employee) {
-    return this.apollo.mutate<any>({mutation: ADD_EMPLOYEE, variables: {
-      name: employee.name,
-      dateOfBirth: employee.dateOfBirth,
-      city: employee.city,
-      salary: employee.salary,
-      gender: employee.gender,
-      email: employee.email
-    }}).pipe(
-          map(({data, loading}) => {
-            this.employees$.next([...this.employees$.getValue(), data.newEmployee]);
-          })
-    )
+  addEmployee(e: Employee): Observable<FetchResult<unknown>>{
+    return this.apollo.mutate({
+        mutation: ADD_EMPLOYEE,
+        variables: {
+          employeeNumber: e.employeeNumber,
+          name: e.name,
+          cit: e.city,
+          salary: e.salary,
+          gender: e.gender,
+          email: e.email
+        }
+      }
+    );
   }
 }
