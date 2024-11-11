@@ -13,6 +13,7 @@ import {Employee} from "../model/employee";
 })
 export class EmployeeComponent {
   employeeForm = this.builder.group({
+    employeeNumber: [0, Validators.required],
     name: ['', Validators.required],
     dateOfBirth: ['', Validators.required],
     city: ['', Validators.required],
@@ -21,6 +22,7 @@ export class EmployeeComponent {
     email: ['', Validators.email]
   });
 
+  get employeeNumber(): AbstractControl<number> {return <AbstractControl<number>>this.employeeForm.get('employeeNumber'); }
   get name(): AbstractControl<string> {return <AbstractControl<string>>this.employeeForm.get('name'); }
   get dateOfBirth(): AbstractControl<string> {return <AbstractControl<string>>this.employeeForm.get('dateOfBirth'); }
   get city(): AbstractControl<string> {return <AbstractControl>this.employeeForm.get('city'); }
@@ -35,6 +37,7 @@ export class EmployeeComponent {
 
   onSubmit() {
     const employee: Employee = new Employee("",
+      this.employeeNumber.value,
       this.name.value,
       this.dateOfBirth.value,
       this.city.value,

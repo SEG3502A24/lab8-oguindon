@@ -3,6 +3,14 @@
   <h1>Employee Entry Form</h1>
   <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
     <div class="mb-3">
+      <label for="employeeNumber">Employee Number:</label>
+      <input type="number" class="form-control" id="employeeNumber" formControlName="employeeNumber" required>
+      <div [hidden]="employeeNumber.pristine || employeeNumber.valid"
+           class="alert alert-danger">
+        Employee Number is required.
+      </div>
+    </div>
+    <div class="mb-3">
       <label for="name">Name:</label>
       <input type="text" class="form-control" id="name" formControlName="name" required>
       <div [hidden]="name.pristine || name.valid"

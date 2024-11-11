@@ -16,6 +16,6 @@ export class EmployeesComponent {
   }
 
   identify(index: number, employee: Employee): string {
-    return employee.id;
+    return employee.employeeId;
   }
 }
